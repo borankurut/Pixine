@@ -12,6 +12,7 @@ _deps
 CMakeUserPresets.json
 build
 build-debug
+.cache
 
 subprojects/SFML-2.5.1
 subprojects/flac-1.5.0
