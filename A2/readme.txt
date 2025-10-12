@@ -1,0 +1,81 @@
+Configuration File:
+The configuration file will have one line each specifying the window size, 
+font format, player, bullet specification, and enemy specifications.
+Lines Will be given in that order, With the following syntax:
+
+Window W H FL FS
+This line declares that the SFML Window must be constructed with width W 
+and height H, each of which will be integers. FL is the frame limit that the 
+window should be set to, and FS will be an integer which specifies whether to 
+display the application in full-screen mode (1) or not (0).
+
+Font F S R G B
+-	This lines defines the font which is to be used to draw text 
+	for this program. The format of the line is as follows: 
+
+	Font File		F		std::string (it will have no spaces) 
+	Font Size		S		int 
+	RGB Color		(R,G,B) int, int, int
+
+Player Specification: 
+	Player SR CR S FR FG FB OR OG OB OT V
+
+	Shape Raadius		SR			int
+	Collision Radius	CR			int 
+	Speed				S			float 
+	Fill Color			FR,FG,FB	int,int,int 
+	Outline Color		OR, OG, OB	int,int,int 
+	Outline Thickness	OT			int 
+	Shape Vertices		V			int
+
+
+Enemy Specification: 
+	Enemy SR CR SMIN SMAX OR OG OB OT VMIN VMAX L SI
+
+	Shape Radius		SR			int 
+	Collision Radius	CR			int 
+	Min / Max Speed		SMIN,SMAX	float,float 
+	Outline Color		OR,OG,OB	int,int,int 
+	Outline Thickness	OT			int 
+	Min/Max Vertices	VMIN, VMAX	int,int 
+	Small Lifespan		L			int 
+	Spawn Interval		SP			int
+
+
+Bullet Specification: 
+	Bullet SR CR S FR FG FB OR OG OB OT V L 
+
+	Shape Radius		SR			int 
+	Collision Radius	CR			int 
+	Speed				S			float 
+	Fill Color			FR,FG,FB	int,int,int 
+	Outline Color		OR,OG,OB	int,int,int 
+	Outline Thickness	OT			int 
+	Shape Vertices		V			int 
+	Lifespan			L			int
+
+------------------------------------------------------------------
+Assignment Hints
+------------------------------------------------------------------
+
+I recommend approaching this assignment in the following order:
+0. Save the configuration file reading until later, after Entities implemented
+1. Implement the Vec2 class, which you will use for all Components
+2. Implement the basic functionality in the EntityManager class 
+	Implement the EntityManager's addEntity() and update() functions so 
+	you can start testing the Game class quickly. Don't worry about the update() 
+	function which deletes dead entities until later when you get more game 
+	mechanics working.
+
+3. Implement basics of the Game class: 
+	a. Construct a player Entity using the spawnPlayer() function 
+	b. Implement basic drawing of entities using the Game::sRender() function 
+	c. Construct some enemies using the spawnEnemy() function 
+	d. Construct a bullet using the spawnBullet() function 
+
+4. Implement Player Movement in Game::sUserInput and Game::sMovement 
+5. Implement the EntityManager::update() function so it deletes dead entities 
+6. Implement the EntityManager::getEntities(tag) functionality 
+7. Implement collisions in scollision and entity.destroy() if it's dead 
+8. Implement the rest of the game's functionality, including config file reading
+
