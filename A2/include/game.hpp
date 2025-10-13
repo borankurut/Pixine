@@ -5,6 +5,17 @@
 
 #include <SFML/Graphics.hpp>
 
+struct WindowConfig
+{
+    int W, H, FL, FS;
+};
+
+struct FontConfig
+{
+    std::string F;
+    int S, R, G, B;
+};
+
 struct PlayerConfig
 {
     int SR, CR, FR, FG, FB, OR, OG, OB, OT, V;
@@ -34,6 +45,8 @@ class Game
     EntityManager m_entities;
     sf::Font m_font;
     sf::Text m_text;  // the score text to be drawn to the screen
+    WindowConfig m_window_config;
+    FontConfig m_font_config;
     PlayerConfig m_player_config;
     EnemyConfig m_enemy_config;
     BulletConfig m_bullet_config;
@@ -54,6 +67,8 @@ class Game
     void s_render();
     void s_enemy_spawner();
     void s_collision();
+    void handle_window_collision(std::shared_ptr<Entity> entity);
+    bool check_collision(std::shared_ptr<Entity> entity_l, std::shared_ptr<Entity> entity_r);
 
     void spawn_player();
     void spawn_enemy();

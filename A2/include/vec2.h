@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <iostream>
 
 class vec2
 {
@@ -7,7 +8,7 @@ class vec2
     float x = 0;
     float y = 0;
 
-    vec2();
+    vec2() {}
     vec2(float x, float y) : x(x), y(y) {}
 
     bool operator==(const vec2& rhs) const { return this->x == rhs.x && this->y == rhs.y; }
@@ -45,4 +46,34 @@ class vec2
     {
         return (this->x - rhs.x) * (this->x - rhs.x) + (this->y - rhs.y) * (this->y - rhs.y);
     }
+
+    float length() const { return std::sqrt(sqr_length()); }
+    float sqr_length() const { return ((this->x * this->x) + (this->y * this->y)); }
+
+    void normalize()
+    {
+        float length = this->length();
+        if (!(length < 0.0001f))
+        {
+            *this /= length;
+        }
+    }
+    vec2 normalized() const
+    {
+        float length = this->length();
+        if (length < 0.0001f)
+        {
+            return *this;
+        }
+        else
+        {
+            return *this / length;
+        }
+    }
 };
+
+inline std::ostream& operator<<(std::ostream& os, const vec2& vec)
+{
+    os << "(" << vec.x << ',' << vec.y << ")";
+    return os;
+}

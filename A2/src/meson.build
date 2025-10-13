@@ -3,4 +3,5 @@ src = files(
   'entity_manager.cpp',
   'game.cpp',
   'main.cpp',
+  'util.cpp',
 )

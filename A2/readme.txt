@@ -39,7 +39,7 @@ Enemy Specification:
 	Outline Thickness	OT			int 
 	Min/Max Vertices	VMIN, VMAX	int,int 
 	Small Lifespan		L			int 
-	Spawn Interval		SP			int
+	Spawn Interval		S			int
 
 
 Bullet Specification: 
