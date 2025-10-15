@@ -9,10 +9,22 @@
 
 class Scene_Play : public Scene
 {
+    struct TileConfig
+    {
+        std::string N;
+        float X, Y;
+    };
+
+    struct DecorationConfig
+    {
+        std::string N;
+        float X, Y;
+    };
+
     struct PlayerConfig
     {
-        float X, Y, CX, CY, SPEED, MAX_SPEED, JUMP, GRAVITY;
-        std::string WEAPON;
+        float X, Y, CW, CH, SX, SY, SM, GY;
+        std::string B;
     };
 
    protected:
@@ -32,6 +44,8 @@ class Scene_Play : public Scene
 
     void load_level(const std::string& file_name);
 
+    void spawn_tile(const TileConfig& tc);
+    void spawn_decoration(const DecorationConfig& dc);
     void spawn_player();
 
     void spawn_bullet(std::shared_ptr<Entity> entity);
