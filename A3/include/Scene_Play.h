@@ -5,6 +5,7 @@
 
 #include "SFML/Graphics/Text.hpp"
 #include "Scene.h"
+#include "Physics.h"
 #include "EntityManager.h"
 
 class Scene_Play : public Scene
@@ -27,6 +28,11 @@ class Scene_Play : public Scene
         std::string B;
     };
 
+   public:
+    Scene_Play(GameEngine* game_engine, const std::string& level_path);
+
+    void update() override;
+
    protected:
     std::shared_ptr<Entity> m_player;
     std::string m_level_path;
@@ -36,7 +42,7 @@ class Scene_Play : public Scene
     bool m_draw_grid = false;
     const vec2 m_grid_size = {64, 64};
     sf::Text m_grid_text;
-    // Physics m_worldPhysics;
+    Physics m_world_physics;
 
     void init(const std::string& level_path);
 
@@ -54,6 +60,8 @@ class Scene_Play : public Scene
 
     void s_lifespan();
 
+    void handle_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
+    void handle_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
     void s_collision();
 
     void s_animation();
@@ -67,9 +75,4 @@ class Scene_Play : public Scene
     //    void changePlayerStateTo(PlayerState s);
     //    void spawnCoinSpin(std::shared_ptr<Entity> tile);
     //    void spawnBrickDebris(std::shared_ptr<Entity> tile);
-
-   public:
-    Scene_Play(GameEngine* game_engine, const std::string& level_path);
-
-    void update() override;
 };

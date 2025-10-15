@@ -5,7 +5,6 @@
 // #include "Scene_Menu.h"
 #include "Scene_Play.h"
 #include "Assets.h"
-// #include "Physics.h"
 #include "GameEngine.h"
 #include "Components.h"
 #include "Action.h"
@@ -40,13 +39,6 @@ void Scene_Play::init(const std::string& level_path)
 
 vec2 Scene_Play::grid_to_mid_pixel(float grid_x, float grid_y, std::shared_ptr<Entity> entity)
 {
-    // TODO: This function takes in a grid (x,y) position and an Entity
-    //       Return a vec2 indicating where the CENTER position of the Entity should be
-    //       You must use the Entity's Animation size to position it correctly
-    //       The size of the grid width and height is stored in m_gridSize.x and m_gridSize.y
-    //       The bottom-left corner of the Animation should aligh with the bottom left of the grid
-    //       cell
-    //
     int x = m_grid_size.x * grid_x;
     int y = m_grid_size.y * grid_y;
 
@@ -55,7 +47,7 @@ vec2 Scene_Play::grid_to_mid_pixel(float grid_x, float grid_y, std::shared_ptr<E
 
     x += anim_size.x / 2;
     y += anim_size.y / 2;
-    y = m_game->window().getSize().y - y;
+    y = height() - y;
 
     return vec2(x, y);
 }
@@ -64,10 +56,6 @@ void Scene_Play::load_level(const std::string& file_name)
 {
     // reset the entity manager every time we load a level
     m_entity_manager = EntityManager();
-
-    // TODO: read in the level file and add the appropriate entities
-    //       use the PlayerConfig struct m_playerConfig to store player properties
-    //       this struct is defined at the top of Scene_Play.h
 
     std::ifstream level_file(file_name);
     std::string option = "";
@@ -132,10 +120,9 @@ void Scene_Play::spawn_decoration(const DecorationConfig& dc)
 
 void Scene_Play::spawn_player()
 {
-    // here is a sample player entity which you can use to construct other entities
     m_player = m_entity_manager.add_entity("player");
     m_player->add_component<C_Animation>(m_game->assets().get_animation("Stand"), true);
-    m_player->add_component<C_State>("standing");
+    m_player->add_component<C_State>("ground");
     m_player->add_component<C_Transform>(
         grid_to_mid_pixel(m_player_config.X, m_player_config.Y, m_player));
     m_player->add_component<C_BoundingBox>(vec2(m_player_config.CW, m_player_config.CH));
@@ -157,8 +144,6 @@ void Scene_Play::spawn_bullet(std::shared_ptr<Entity> entity)
 void Scene_Play::update()
 {
     m_entity_manager.update();
-
-    // TODO: implement pause functionality
 
     if (m_paused)
     {
@@ -199,29 +184,72 @@ void Scene_Play::s_movement()
         input.can_jump = false;
     }
 
-    /* p_transform.velocity.x = std::min(p_transform.velocity.x, m_player_config.SM); */
-    /* p_transform.velocity.y = std::min(p_transform.velocity.y, m_player_config.SM); */
-
-    // TODO: handle gravity here.
-    /* p_transform.velocity.y += p_gravity.gravity; */
-
-    // handle velocity
     for (auto e : m_entity_manager.get_entities())
     {
         if (e->has_component<C_Transform>())
         {
+            if (e->has_component<C_Gravity>())
+            {
+                p_transform.velocity.y += p_gravity.gravity;
+            }
+
             C_Transform& t = e->get_component<C_Transform>();
             t.prev_pos = t.pos;
             t.pos += t.velocity;
         }
     }
-
-    // TODO: Gravity and better jump stuff
 }
 
 void Scene_Play::s_lifespan()
 {
-    // TODO: Check lifespan of entities the have them, and destroy them if they go over
+    for (auto entity : m_entity_manager.get_entities())
+    {
+        if (entity->has_component<C_Lifespan>())
+        {
+            C_Lifespan& lifespan = entity->get_component<C_Lifespan>();
+            if (m_current_frame - lifespan.frame_created > lifespan.lifespan)
+            {
+                entity->destroy();
+            }
+        }
+    }
+}
+
+void Scene_Play::handle_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
+{
+    C_Transform& p_t = m_player->get_component<C_Transform>();
+    C_Transform& t_t = tile->get_component<C_Transform>();
+    p_t.velocity.y = 0;
+
+    if (p_t.pos.y < t_t.pos.y)
+    {
+        p_t.pos.y -= overlap.y;
+        m_player->get_component<C_State>().state = "ground";
+        std::cout << "Collision from Below!" << std::endl;
+    }
+    else
+    {
+        p_t.pos.y += overlap.y;
+        std::cout << "Collision from Above!" << std::endl;
+    }
+}
+
+void Scene_Play::handle_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
+{
+    C_Transform& p_t = m_player->get_component<C_Transform>();
+    C_Transform& t_t = tile->get_component<C_Transform>();
+    p_t.velocity.x = 0;
+
+    if (p_t.pos.x < t_t.pos.x)
+    {
+        p_t.pos.x -= (overlap.x);
+        std::cout << "Collision from Right!" << std::endl;
+    }
+    else
+    {
+        p_t.pos.x += (overlap.x);
+        std::cout << "Collision from Left!" << std::endl;
+    }
 }
 
 void Scene_Play::s_collision()
@@ -232,16 +260,64 @@ void Scene_Play::s_collision()
     //           Also, something BELOW something else will hava a y value GREATER than it
     //           Also, something ABOVE something else will hava a y value LESS than it
 
-    // TODO: Implement Physics::GetOverlap() function, use it inside this function
+    C_Transform& p_t = m_player->get_component<C_Transform>();
+    m_player->get_component<C_State>().state = "air";
 
-    // TODO: Implement bullet/tile collisions
-    //       Destroy the tile if it has a Brick animation
-    // TODO: Implement player/tile collisions and resolutions
-    //       Update the CState component of the player to store whether
-    //       it is currently on the ground or in the air. This will be
-    //       used by the Animation system
-    // TODO: Check to see if the player has fallen down a hole (y > height())
-    // TODO: Don't let the player walk off the left side of the map
+    for (auto tile : m_entity_manager.get_entities("tile"))
+    {
+        for (auto bullet : m_entity_manager.get_entities("bullet"))
+        {
+            std::string name = tile->get_component<C_Animation>().animation.get_name();
+            if (name != "Brick")
+            {
+                continue;
+            }
+            vec2 collision = m_world_physics.get_overlap(bullet, tile);
+            if (collision.x > 0 && collision.y > 0)
+            {
+                bullet->destroy();
+
+                tile->remove_component<C_BoundingBox>();
+                tile->add_component<C_Animation>(
+                    m_game->assets().get_animation("Explosion"), false);
+            }
+        }
+
+        //
+        // TODO: Implement player/tile collisions and resolutions
+        //       Update the CState component of the player to store whether
+        //       it is currently on the ground or in the air. This will be
+        //       used by the Animation system
+
+        if (!tile->has_component<C_BoundingBox>())
+        {
+            continue;
+        }
+        vec2 overlap = m_world_physics.get_overlap(m_player, tile);
+
+        if (overlap.x > 0 && overlap.y > 0)
+        {
+            vec2 p_overlap = m_world_physics.get_previous_overlap(m_player, tile);
+            if (p_overlap.y <= 0)
+            {
+                handle_vertical_collision_player(tile, overlap);
+            }
+            else
+            {
+                handle_horizontal_collision_player(tile, overlap);
+            }
+        }
+    }
+
+    if (p_t.pos.y > height())
+    {
+        load_level(m_level_path);
+    }
+
+    if (p_t.pos.x < 0)
+    {
+        p_t.pos.x = 0;
+    }
 }
 
 void Scene_Play::s_do_action(const Action& action)
@@ -320,7 +396,12 @@ void Scene_Play::s_animation()
 {
     for (auto entity : m_entity_manager.get_entities())
     {
-        entity->get_component<C_Animation>().animation.update();
+        C_Animation& anim = entity->get_component<C_Animation>();
+        anim.animation.update();
+        if (!anim.repeat && anim.animation.has_ended())
+        {
+            entity->destroy();
+        }
     }
 }
 

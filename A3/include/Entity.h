@@ -49,7 +49,7 @@ class Entity
     }
 
     template <class T>
-    void remove_component() const
+    void remove_component()
     {
         get_component<T>() = T();
     }
