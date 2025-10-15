@@ -55,7 +55,8 @@ class Game
     int m_last_enemy_spawn_time = 0;
     bool m_paused = false;  // whether update game logic
     bool m_running = true;  // whether the game is running
-                            //
+    int m_lives = 3;
+
     std::shared_ptr<Entity> m_player;
 
     void init(const std::string& config);
@@ -68,7 +69,11 @@ class Game
     void s_enemy_spawner();
     void s_collision();
     void handle_window_collision(std::shared_ptr<Entity> entity);
+    bool handle_enemy_collision(std::shared_ptr<Entity> enemy);
     bool check_collision(std::shared_ptr<Entity> entity_l, std::shared_ptr<Entity> entity_r);
+    void handle_hit(std::shared_ptr<Entity> enemy);
+    void handle_game_over();
+    void update_score();
 
     void spawn_player();
     void spawn_enemy();
