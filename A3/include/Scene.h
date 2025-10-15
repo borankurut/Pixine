@@ -7,7 +7,7 @@
 
 class GameEngine;
 
-typedef std::map<int, std::string> ActionMap;
+typedef std::map<int, Action::Name> ActionMap;
 
 class Scene
 {
@@ -40,7 +40,7 @@ class Scene
 
     void simulate(size_t frames);
 
-    void register_action(int input_key, const std::string& action_name);
+    void register_action(int input_key, Action::Name action_name);
 
     [[nodiscard]] size_t width() const;
 

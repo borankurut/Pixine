@@ -26,11 +26,12 @@ void Assets::load_from_file(const std::string& path)
         }
         else if (asset_type == "Animation")
         {
-            std::string animation_name;
+            std::string animation_name_str;
             std::string texture_name;
             int frames, speed;
-            file >> animation_name >> texture_name >> frames >> speed;
+            file >> animation_name_str >> texture_name >> frames >> speed;
             const sf::Texture& tex = get_texture(texture_name);
+            Animation::Name animation_name = Animation::str_to_name(animation_name_str);
             add_animation(animation_name, Animation(animation_name, tex, frames, speed));
         }
         else if (asset_type == "Font")
@@ -59,7 +60,7 @@ void Assets::add_texture(const std::string& name, const std::string& path)
     m_texture_map[name] = texture;
 }
 
-void Assets::add_animation(const std::string& name, const Animation& animation)
+void Assets::add_animation(Animation::Name name, const Animation& animation)
 {
     m_animation_map[name] = animation;
 }
@@ -81,7 +82,7 @@ const sf::Texture& Assets::get_texture(const std::string& name) const
     return m_texture_map.at(name);
 }
 
-const Animation& Assets::get_animation(const std::string& name) const
+const Animation& Assets::get_animation(Animation::Name name) const
 {
     assert(m_animation_map.find(name) != m_animation_map.end());
     return m_animation_map.at(name);

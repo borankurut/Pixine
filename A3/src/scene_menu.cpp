@@ -16,10 +16,10 @@ Scene_Menu::Scene_Menu(GameEngine* game_engine) : Scene(game_engine)
 
 void Scene_Menu::init()
 {
-    register_action(sf::Keyboard::W, "UP");
-    register_action(sf::Keyboard::S, "DOWN");
-    register_action(sf::Keyboard::D, "PLAY");
-    register_action(sf::Keyboard::Escape, "QUIT");
+    register_action(sf::Keyboard::W, Action::Name::UP);
+    register_action(sf::Keyboard::S, Action::Name::DOWN);
+    register_action(sf::Keyboard::D, Action::Name::PLAY);
+    register_action(sf::Keyboard::Escape, Action::Name::QUIT);
 
     m_title = "Lunatics";
     int title_size = 30;
@@ -69,9 +69,9 @@ void Scene_Menu::on_end()
 
 void Scene_Menu::s_do_action(const Action& action)
 {
-    if (action.type() == "START")
+    if (action.type() == Action::Type::START)
     {
-        if (action.name() == "UP")
+        if (action.name() == Action::Name::UP)
         {
             if (m_selected_menu_index > 0)
             {
@@ -82,16 +82,16 @@ void Scene_Menu::s_do_action(const Action& action)
                 m_selected_menu_index = m_menu_strings.size() - 1;
             }
         }
-        else if (action.name() == "DOWN")
+        else if (action.name() == Action::Name::DOWN)
         {
             m_selected_menu_index = (m_selected_menu_index + 1) % m_menu_strings.size();
         }
-        else if (action.name() == "PLAY")
+        else if (action.name() == Action::Name::PLAY)
         {
             m_game->change_scene(
                 "PLAY", std::make_shared<Scene_Play>(m_game, m_level_paths[m_selected_menu_index]));
         }
-        else if (action.name() == "QUIT")
+        else if (action.name() == Action::Name::QUIT)
         {
             on_end();
         }

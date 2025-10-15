@@ -40,4 +40,4 @@ Dec Bush         4 1
 Dec Flower       4 1
 Dec CastleSmall 20 1
 Dec Bush        19 1
-Player 1 1 64 64 5 15 20 1 Buster
+Player 1 1 64 64 5 20 20 1 Buster

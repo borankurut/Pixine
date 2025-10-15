@@ -5,12 +5,36 @@
 class Action
 {
    public:
+    enum class Type
+    {
+        NONE,
+        START,
+        END
+    };
+
+    enum class Name
+    {
+        NONE,
+        PAUSE,
+        QUIT,
+        TOGGLE_TEXTURE,
+        TOGGLE_COLLISION,
+        TOGGLE_GRID,
+        JUMP,
+        LEFT,
+        DOWN,
+        RIGHT,
+        SHOOT,
+        UP,
+        PLAY,
+    };
+
     Action();
-    Action(std::string name, std::string type);
-    [[nodiscard]] const std::string& name() const;
-    [[nodiscard]] const std::string& type() const;
+    Action(Name name, Type type);
+    [[nodiscard]] Name name() const;
+    [[nodiscard]] Type type() const;
 
    private:
-    std::string m_name;
-    std::string m_type;
+    Name m_name;
+    Type m_type;
 };

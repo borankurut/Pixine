@@ -17,11 +17,11 @@ Texture     TexCastleSmall images/mario/castle_small.png
 Texture     TexFlower      images/mario/flower.png
 Texture     TexBush        images/mario/bush.png
 Animation   Stand          TexStand       2  30
-Animation   StandShoot     TexStandShoot  1   1
+Animation   StandShoot     TexStandShoot  1   10
 Animation   Run            TexRun         3   7
 Animation   RunShoot       TexRunShoot    3   7
 Animation   Jump           TexJump        1   1
-Animation   AirShoot       TexAirShoot    1   1
+Animation   AirShoot       TexAirShoot    1  10 
 Animation   Buster         TexBuster      1   1
 Animation   Explosion      TexExplode    12   2
 Animation   Ground         TexGround      1   1

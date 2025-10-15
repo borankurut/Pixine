@@ -19,16 +19,17 @@ Scene_Play::Scene_Play(GameEngine* game_engine, const std::string& level_path)
 
 void Scene_Play::init(const std::string& level_path)
 {
-    register_action(sf::Keyboard::P, "PAUSE");
-    register_action(sf::Keyboard::Escape, "QUIT");
-    register_action(sf::Keyboard::T, "TOGGLE_TEXTURE");    // Toggle drawing (T)extures
-    register_action(sf::Keyboard::C, "TOGGLE_COLLISION");  // Toggle drawing (C)ollision Boxes
-    register_action(sf::Keyboard::G, "TOGGLE_GRID");       // Toggle drawing (G)rid
-    register_action(sf::Keyboard::W, "JUMP");
-    register_action(sf::Keyboard::A, "LEFT");
-    register_action(sf::Keyboard::S, "DOWN");
-    register_action(sf::Keyboard::D, "RIGHT");
-    register_action(sf::Keyboard::Space, "SHOOT");
+    register_action(sf::Keyboard::P, Action::Name::PAUSE);
+    register_action(sf::Keyboard::Escape, Action::Name::QUIT);
+    register_action(sf::Keyboard::T, Action::Name::TOGGLE_TEXTURE);  // Toggle drawing (T)extures
+    register_action(
+        sf::Keyboard::C, Action::Name::TOGGLE_COLLISION);  // Toggle drawing (C)ollision Boxes
+    register_action(sf::Keyboard::G, Action::Name::TOGGLE_GRID);  // Toggle drawing (G)rid
+    register_action(sf::Keyboard::W, Action::Name::JUMP);
+    register_action(sf::Keyboard::A, Action::Name::LEFT);
+    register_action(sf::Keyboard::S, Action::Name::DOWN);
+    register_action(sf::Keyboard::D, Action::Name::RIGHT);
+    register_action(sf::Keyboard::Space, Action::Name::SHOOT);
 
     m_grid_text.setCharacterSize(12);
     m_grid_text.setFont(m_game->assets().get_font("Mario"));
@@ -83,30 +84,13 @@ void Scene_Play::load_level(const std::string& file_name)
         }
     }
     spawn_player();
-
-    /* if (brick->get_component<C_Animation>().animation.get_name() == "Brick") */
-    /* { */
-    /*     std::cout << "This could be a good way of identifying if a tile is a brick!\n"; */
-    /* } */
-
-    // NOTE: THIS IS INCREDIBLY IMPORTANT PLEASE READ THIS EXAMPLE
-    //       Components are now returned as references rather than pointers
-    //       If you do not specify a reference variable type, it will COPY the component
-    //       Here is an example:
-    //
-    //       This will COPY the transform into the variable 'transform1' - it is INCORRECT
-    //       Any changes you make to transform1 will not be changed inside the entity
-    //       auto transform1 = entity->get<CTransform>()
-    //
-    //       This will REFERENCE the transform with the variable 'transform2' - it is CORRECT
-    //       Now any changes you make to transform2 will be changed inside the entity
-    //       auto& transform2 = entity->get<CTransform>()
 }
 
 void Scene_Play::spawn_tile(const TileConfig& tc)
 {
     auto tile = m_entity_manager.add_entity("tile");
-    tile->add_component<C_Animation>(m_game->assets().get_animation(tc.N), true);
+    tile->add_component<C_Animation>(
+        m_game->assets().get_animation(Animation::str_to_name(tc.N)), true);
     tile->add_component<C_Transform>(grid_to_mid_pixel(tc.X, tc.Y, tile));
     tile->add_component<C_BoundingBox>(m_grid_size);
 }
@@ -114,14 +98,16 @@ void Scene_Play::spawn_tile(const TileConfig& tc)
 void Scene_Play::spawn_decoration(const DecorationConfig& dc)
 {
     auto decoration = m_entity_manager.add_entity("decoration");
-    decoration->add_component<C_Animation>(m_game->assets().get_animation(dc.N), true);
+    decoration->add_component<C_Animation>(
+        m_game->assets().get_animation(Animation::str_to_name(dc.N)), true);
     decoration->add_component<C_Transform>(grid_to_mid_pixel(dc.X, dc.Y, decoration));
 }
 
 void Scene_Play::spawn_player()
 {
     m_player = m_entity_manager.add_entity("player");
-    m_player->add_component<C_Animation>(m_game->assets().get_animation("Stand"), true);
+    m_player->add_component<C_Animation>(
+        m_game->assets().get_animation(Animation::Name::STAND), true);
     m_player->add_component<C_State>("ground");
     m_player->add_component<C_Transform>(
         grid_to_mid_pixel(m_player_config.X, m_player_config.Y, m_player));
@@ -133,11 +119,12 @@ void Scene_Play::spawn_player()
 void Scene_Play::spawn_bullet(std::shared_ptr<Entity> entity)
 {
     auto bullet = m_entity_manager.add_entity("bullet");
-    bullet->add_component<C_Animation>(m_game->assets().get_animation(m_player_config.B), true);
+    bullet->add_component<C_Animation>(
+        m_game->assets().get_animation(Animation::str_to_name(m_player_config.B)), true);
     bullet->add_component<C_Transform>(entity->get_component<C_Transform>().pos);
     bullet->get_component<C_Transform>().velocity =
-        vec2(entity->get_component<C_Transform>().scale.x * 10, 0);
-    bullet->add_component<C_Lifespan>((10 * 60), m_current_frame);
+        vec2(entity->get_component<C_Transform>().scale.x * 20, 0);
+    bullet->add_component<C_Lifespan>((2 * 60), m_current_frame);
     bullet->add_component<C_BoundingBox>(vec2(10, 10));
 }
 
@@ -163,25 +150,34 @@ void Scene_Play::s_movement()
     C_Input& input = m_player->get_component<C_Input>();
     C_Transform& p_transform = m_player->get_component<C_Transform>();
     C_Gravity& p_gravity = m_player->get_component<C_Gravity>();
+    C_State& p_state = m_player->get_component<C_State>();
+
     if (input.right)
     {
         p_transform.velocity.x = m_player_config.SX;
         p_transform.scale.x = 1;
+        p_state.state = "run";
     }
     else if (input.left)
     {
         p_transform.velocity.x = -m_player_config.SX;
         p_transform.scale.x = -1;
+        p_state.state = "run";
     }
     else
     {
+        p_state.state = "stand";
         p_transform.velocity.x = 0;
     }
 
-    if (input.up)
+    if (input.up && input.can_jump)
     {
         p_transform.velocity.y = -m_player_config.SY;
         input.can_jump = false;
+    }
+    if (!input.up && p_transform.velocity.y < 0)
+    {
+        p_transform.velocity.y = 0;
     }
 
     for (auto e : m_entity_manager.get_entities())
@@ -215,26 +211,50 @@ void Scene_Play::s_lifespan()
     }
 }
 
-void Scene_Play::handle_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
+bool Scene_Play::resolve_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
 {
+    bool grounded = false;
     C_Transform& p_t = m_player->get_component<C_Transform>();
+    C_Input& p_i = m_player->get_component<C_Input>();
     C_Transform& t_t = tile->get_component<C_Transform>();
     p_t.velocity.y = 0;
 
     if (p_t.pos.y < t_t.pos.y)
     {
         p_t.pos.y -= overlap.y;
-        m_player->get_component<C_State>().state = "ground";
+        if (!p_i.up)
+        {
+            p_i.can_jump = true;
+        }
+        grounded = true;
+
         std::cout << "Collision from Below!" << std::endl;
     }
     else
     {
         p_t.pos.y += overlap.y;
         std::cout << "Collision from Above!" << std::endl;
+
+        if (tile->get_component<C_Animation>().animation.get_name() == Animation::Name::QUESTION)
+        {
+            tile->add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::QUESTION_HIT), true);
+
+            auto coin = m_entity_manager.add_entity("coin");
+
+            coin->add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::COIN_SPIN), true);
+            coin->add_component<C_Transform>(
+                tile->get_component<C_Transform>().pos + vec2(0, -m_grid_size.y));
+            coin->get_component<C_Transform>().scale.x =
+                coin->get_component<C_Transform>().scale.y = 0.5;
+            coin->add_component<C_BoundingBox>(vec2(10, 10));
+        }
     }
+    return grounded;
 }
 
-void Scene_Play::handle_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
+void Scene_Play::resolve_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap)
 {
     C_Transform& p_t = m_player->get_component<C_Transform>();
     C_Transform& t_t = tile->get_component<C_Transform>();
@@ -261,25 +281,24 @@ void Scene_Play::s_collision()
     //           Also, something ABOVE something else will hava a y value LESS than it
 
     C_Transform& p_t = m_player->get_component<C_Transform>();
-    m_player->get_component<C_State>().state = "air";
+    bool air = true;
 
     for (auto tile : m_entity_manager.get_entities("tile"))
     {
         for (auto bullet : m_entity_manager.get_entities("bullet"))
         {
-            std::string name = tile->get_component<C_Animation>().animation.get_name();
-            if (name != "Brick")
-            {
-                continue;
-            }
+            Animation::Name name = tile->get_component<C_Animation>().animation.get_name();
             vec2 collision = m_world_physics.get_overlap(bullet, tile);
             if (collision.x > 0 && collision.y > 0)
             {
                 bullet->destroy();
 
-                tile->remove_component<C_BoundingBox>();
-                tile->add_component<C_Animation>(
-                    m_game->assets().get_animation("Explosion"), false);
+                if (name == Animation::Name::BRICK)
+                {
+                    tile->remove_component<C_BoundingBox>();
+                    tile->add_component<C_Animation>(
+                        m_game->assets().get_animation(Animation::Name::EXPLOSION), false);
+                }
             }
         }
 
@@ -300,13 +319,21 @@ void Scene_Play::s_collision()
             vec2 p_overlap = m_world_physics.get_previous_overlap(m_player, tile);
             if (p_overlap.y <= 0)
             {
-                handle_vertical_collision_player(tile, overlap);
+                if (resolve_vertical_collision_player(tile, overlap))
+                {
+                    air = false;
+                }
             }
             else
             {
-                handle_horizontal_collision_player(tile, overlap);
+                resolve_horizontal_collision_player(tile, overlap);
             }
         }
+    }
+
+    if (air)
+    {
+        m_player->get_component<C_State>().state = "air";
     }
 
     if (p_t.pos.y > height())
@@ -318,73 +345,100 @@ void Scene_Play::s_collision()
     {
         p_t.pos.x = 0;
     }
+
+    // coin collision
+    for (auto coin : m_entity_manager.get_entities("coin"))
+    {
+        vec2 overlap = m_world_physics.get_overlap(coin, m_player);
+        if (overlap.x > 0 && overlap.y > 0)
+        {
+            coin->destroy();
+        }
+    }
 }
 
 void Scene_Play::s_do_action(const Action& action)
 {
-    if (action.type() == "START")
+    if (action.type() == Action::Type::START)
     {
-        if (action.name() == "TOGGLE_TEXTURE")
+        if (action.name() == Action::Name::TOGGLE_TEXTURE)
         {
             m_draw_textures = !m_draw_textures;
         }
-        else if (action.name() == "TOGGLE_COLLISION")
+        else if (action.name() == Action::Name::TOGGLE_COLLISION)
         {
             m_draw_collision = !m_draw_collision;
         }
-        else if (action.name() == "TOGGLE_GRID")
+        else if (action.name() == Action::Name::TOGGLE_GRID)
         {
             m_draw_grid = !m_draw_grid;
         }
-        else if (action.name() == "PAUSE")
+        else if (action.name() == Action::Name::PAUSE)
         {
             set_paused(!m_paused);
         }
-        else if (action.name() == "QUIT")
+        else if (action.name() == Action::Name::QUIT)
         {
             on_end();
         }
-        else if (action.name() == "JUMP")
+        else if (action.name() == Action::Name::JUMP)
         {
             m_player->get_component<C_Input>().up = true;
         }
-        else if (action.name() == "LEFT")
+        else if (action.name() == Action::Name::LEFT)
         {
             m_player->get_component<C_Input>().left = true;
         }
-        else if (action.name() == "DOWN")
+        else if (action.name() == Action::Name::DOWN)
         {
             m_player->get_component<C_Input>().down = true;
         }
-        else if (action.name() == "RIGHT")
+        else if (action.name() == Action::Name::RIGHT)
         {
             m_player->get_component<C_Input>().right = true;
         }
-        else if (action.name() == "SHOOT")
+        else if (action.name() == Action::Name::SHOOT)
         {
-            m_player->get_component<C_Input>().shoot = true;
+            C_Input& p_input = m_player->get_component<C_Input>();
+            const std::string& p_state = m_player->get_component<C_State>().state;
+            p_input.shoot = true;
+            if (p_state == "air")
+            {
+                m_player->add_component<C_Animation>(
+                    m_game->assets().get_animation(Animation::Name::AIR_SHOOT), false);
+            }
+            else if (p_state == "run")
+            {
+                m_player->add_component<C_Animation>(
+                    m_game->assets().get_animation(Animation::Name::RUN_SHOOT), false);
+            }
+            else
+            {
+                m_player->add_component<C_Animation>(
+                    m_game->assets().get_animation(Animation::Name::STAND_SHOOT), false);
+            }
             spawn_bullet(m_player);
         }
     }
-    else if (action.type() == "END")
+    else if (action.type() == Action::Type::END)
     {
-        if (action.name() == "JUMP")
+        if (action.name() == Action::Name::JUMP)
         {
             m_player->get_component<C_Input>().up = false;
         }
-        else if (action.name() == "LEFT")
+        else if (action.name() == Action::Name::LEFT)
         {
             m_player->get_component<C_Input>().left = false;
         }
-        else if (action.name() == "DOWN")
+        else if (action.name() == Action::Name::DOWN)
         {
             m_player->get_component<C_Input>().down = false;
         }
-        else if (action.name() == "RIGHT")
+        else if (action.name() == Action::Name::RIGHT)
         {
             m_player->get_component<C_Input>().right = false;
         }
-        else if (action.name() == "SHOOT")
+        else if (action.name() == Action::Name::SHOOT)
         {
             m_player->get_component<C_Input>().shoot = false;
             m_player->get_component<C_Input>().can_shoot = true;
@@ -400,7 +454,42 @@ void Scene_Play::s_animation()
         anim.animation.update();
         if (!anim.repeat && anim.animation.has_ended())
         {
-            entity->destroy();
+            if (entity != m_player)
+            {
+                entity->destroy();
+            }
+        }
+    }
+
+    C_Animation& p_anim = m_player->get_component<C_Animation>();
+    C_State& p_state = m_player->get_component<C_State>();
+    if (p_anim.repeat == false && !p_anim.animation.has_ended())
+    {
+        return;
+    }
+
+    if (p_state.state == "stand")
+    {
+        if (p_anim.animation.get_name() != Animation::Name::STAND)
+        {
+            m_player->add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::STAND), true);
+        }
+    }
+    else if (p_state.state == "run")
+    {
+        if (p_anim.animation.get_name() != Animation::Name::RUN)
+        {
+            m_player->add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::RUN), true);
+        }
+    }
+    else if (p_state.state == "air")
+    {
+        if (p_anim.animation.get_name() != Animation::Name::JUMP)
+        {
+            m_player->add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::JUMP), true);
         }
     }
 }

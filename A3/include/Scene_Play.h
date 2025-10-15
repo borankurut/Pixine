@@ -60,8 +60,9 @@ class Scene_Play : public Scene
 
     void s_lifespan();
 
-    void handle_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
-    void handle_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
+    // returns grounded (collision from below)
+    bool resolve_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
+    void resolve_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
     void s_collision();
 
     void s_animation();
