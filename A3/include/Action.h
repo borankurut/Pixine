@@ -6,11 +6,8 @@ class Action
 {
    public:
     Action();
-
     Action(std::string name, std::string type);
-
     [[nodiscard]] const std::string& name() const;
-
     [[nodiscard]] const std::string& type() const;
 
    private:

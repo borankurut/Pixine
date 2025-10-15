@@ -238,10 +238,10 @@ void Scene_Play::s_render()
             if (e->has_component<C_Animation>())
             {
                 auto& animation = e->get_component<C_Animation>().animation;
-                animation.get_sprite().setRotation(transform.angle);
-                animation.get_sprite().setPosition(transform.pos.x, transform.pos.y);
-                animation.get_sprite().setScale(transform.scale.x, transform.scale.y);
-                m_game->window().draw(animation.get_sprite());
+                animation.sprite().setRotation(transform.angle);
+                animation.sprite().setPosition(transform.pos.x, transform.pos.y);
+                animation.sprite().setScale(transform.scale.x, transform.scale.y);
+                m_game->window().draw(animation.sprite());
             }
         }
     }

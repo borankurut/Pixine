@@ -48,7 +48,7 @@ const std::string& Animation::get_name() const
     return m_name;
 }
 
-sf::Sprite& Animation::get_sprite()
+sf::Sprite& Animation::sprite()
 {
     return m_sprite;
 }
