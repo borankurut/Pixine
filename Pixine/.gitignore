@@ -14,7 +14,7 @@ build
 build-debug
 .cache
 
-subprojects/SFML-2.5.1
+#subprojects/SFML-2.5.1
 subprojects/flac-1.5.0
 subprojects/fmt-12.0.0
 subprojects/freetype-2.14.1
