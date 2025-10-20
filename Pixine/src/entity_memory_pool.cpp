@@ -1,4 +1,5 @@
 #include "entity_memory_pool.h"
+#include <cassert>
 #include "entity.h"
 
 EntityMemoryPool::EntityMemoryPool(size_t max_entities)
@@ -23,38 +24,49 @@ EntityMemoryPool& EntityMemoryPool::Instance()
 
 Entity EntityMemoryPool::add_entity(const std::string& tag)
 {
-    size_t index = get_next_index();
-    m_tags[index] = tag;
-    m_active[index] = true;
+    size_t id = get_next_id();
+    assert(id != MAX_ENTITIES);
 
-    std::get<std::vector<C_Transform>>(m_data)[index].has = false;
-    std::get<std::vector<C_Lifespan>>(m_data)[index].has = false;
-    std::get<std::vector<C_Input>>(m_data)[index].has = false;
-    std::get<std::vector<C_BoundingBox>>(m_data)[index].has = false;
-    std::get<std::vector<C_Animation>>(m_data)[index].has = false;
-    std::get<std::vector<C_Gravity>>(m_data)[index].has = false;
-    std::get<std::vector<C_State>>(m_data)[index].has = false;
+    m_num_entities++;
+    m_tags[id] = tag;
+    m_active[id] = true;
+    reset_components(id);
 
-    return Entity(index);
-    return Entity(index);
+    return Entity(id);
+}
+
+void EntityMemoryPool::reset_components(size_t id)
+{
+    std::get<std::vector<C_Transform>>(m_data)[id].has = false;
+    std::get<std::vector<C_Lifespan>>(m_data)[id].has = false;
+    std::get<std::vector<C_Input>>(m_data)[id].has = false;
+    std::get<std::vector<C_BoundingBox>>(m_data)[id].has = false;
+    std::get<std::vector<C_Animation>>(m_data)[id].has = false;
+    std::get<std::vector<C_Gravity>>(m_data)[id].has = false;
+    std::get<std::vector<C_State>>(m_data)[id].has = false;
 }
 
 void EntityMemoryPool::remove_entity(size_t id)
 {
     m_active[id] = false;
     m_tags[id] = "default";
+    m_removed_entity_indices.push(id);
+    m_num_entities--;
 }
 
-size_t EntityMemoryPool::get_next_index()
+size_t EntityMemoryPool::get_next_id()
 {
-    // TODO: add a removed entity look up.
-    for (size_t i = 0; i < MAX_ENTITIES; ++i)
+    if (!m_removed_entity_indices.empty())
     {
-        if (!m_active[i])
-        {
-            return i;
-            m_num_entities++;
-        }
+        size_t id = m_removed_entity_indices.top();
+        m_removed_entity_indices.pop();
+        return id;
     }
-    return -1;
+
+    if (m_num_entities < MAX_ENTITIES)
+    {
+        return m_num_entities;
+    }
+
+    return MAX_ENTITIES;
 }

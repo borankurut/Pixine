@@ -52,5 +52,6 @@ class EntityMemoryPool
     std::vector<bool> m_active;
     std::stack<size_t> m_removed_entity_indices;
     EntityMemoryPool(size_t max_entities);
-    size_t get_next_index();
+    size_t get_next_id();
+    void reset_components(size_t index);
 };
