@@ -48,6 +48,10 @@ void EntityMemoryPool::reset_components(size_t id)
 
 void EntityMemoryPool::remove_entity(size_t id)
 {
+    if (!m_active[id])
+    {
+        return;
+    }
     m_active[id] = false;
     m_tags[id] = "default";
     m_removed_entity_indices.push(id);
