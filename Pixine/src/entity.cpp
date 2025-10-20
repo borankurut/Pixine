@@ -1,4 +1,4 @@
-#include "Entity.h"
+#include "entity.h"
 
 Entity::Entity(const size_t id) : m_id(id)
 {

@@ -2,10 +2,10 @@
 #include <utility>
 
 #include "SFML/Window/Event.hpp"
-#include "GameEngine.h"
-#include "Assets.h"
-#include "Scene_Menu.h"
-#include "Scene_Play.h"
+#include "game_engine.h"
+#include "assets.h"
+#include "scene_menu.h"
+#include "scene_play.h"
 
 GameEngine::GameEngine(const std::string& path)
 {

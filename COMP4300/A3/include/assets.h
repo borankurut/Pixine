@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-#include "Animation.h"
+#include "animation.h"
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Texture.hpp>
 

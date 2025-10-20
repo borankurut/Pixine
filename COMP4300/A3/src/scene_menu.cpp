@@ -1,13 +1,13 @@
 #include <iostream>
 
 #include "SFML/Window/Event.hpp"
-#include "Scene_Menu.h"
-#include "Scene_Play.h"
-#include "Physics.h"
-#include "Assets.h"
-#include "GameEngine.h"
-#include "Components.h"
-#include "Action.h"
+#include "scene_menu.h"
+#include "scene_play.h"
+#include "physics.h"
+#include "assets.h"
+#include "game_engine.h"
+#include "components.h"
+#include "action.h"
 
 Scene_Menu::Scene_Menu(GameEngine* game_engine) : Scene(game_engine)
 {

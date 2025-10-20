@@ -2,14 +2,13 @@
 #include <fstream>
 
 #include "SFML//Window/Event.hpp"
-// #include "Scene_Menu.h"
-#include "Scene_Play.h"
-#include "Assets.h"
-#include "GameEngine.h"
-#include "Components.h"
-#include "Action.h"
+#include "scene_menu.h"
+#include "scene_play.h"
+#include "assets.h"
+#include "game_engine.h"
+#include "components.h"
+#include "action.h"
 #include "SFML/Graphics/RectangleShape.hpp"
-#include "Scene_Menu.h"
 
 Scene_Play::Scene_Play(GameEngine* game_engine, const std::string& level_path)
     : Scene(game_engine), m_level_path(level_path)
@@ -274,12 +273,6 @@ void Scene_Play::resolve_horizontal_collision_player(Entity tile, vec2 overlap)
 
 void Scene_Play::s_collision()
 {
-    // REMEMBER: SFML's (0,0) position is in the TOP-LEFT corner
-    //           This means jumping will have a negative y-component
-    //           and gravity will have a positive y-component
-    //           Also, something BELOW something else will hava a y value GREATER than it
-    //           Also, something ABOVE something else will hava a y value LESS than it
-
     C_Transform& p_t = m_player.get_component<C_Transform>();
     bool air = true;
 

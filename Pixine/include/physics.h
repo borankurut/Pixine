@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Entity.h"
+#include "entity.h"
 #include "vec2.h"
 
 class Physics

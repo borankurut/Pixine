@@ -2,14 +2,13 @@
 #include <fstream>
 
 #include "SFML//Window/Event.hpp"
-// #include "Scene_Menu.h"
-#include "Scene_Play.h"
-#include "Assets.h"
-#include "GameEngine.h"
-#include "Components.h"
-#include "Action.h"
-#include "SFML/Graphics/RectangleShape.hpp"
 #include "Scene_Menu.h"
+#include "scene_play.h"
+#include "assets.h"
+#include "game_engine.h"
+#include "components.h"
+#include "action.h"
+#include "SFML/Graphics/RectangleShape.hpp"
 
 Scene_Play::Scene_Play(GameEngine* game_engine, const std::string& level_path)
     : Scene(game_engine), m_level_path(level_path)

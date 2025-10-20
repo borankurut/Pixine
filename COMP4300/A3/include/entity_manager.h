@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 
-#include "Entity.h"
+#include "entity.h"
 
 typedef std::vector<std::shared_ptr<Entity>> EntityVec;
 typedef std::map<std::string, EntityVec> EntityMap;

@@ -1,7 +1,7 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
-#include "Assets.h"
+#include "assets.h"
 
 Assets::Assets() = default;
 

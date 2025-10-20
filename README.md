@@ -1,9 +1,8 @@
 # Pixine — a tiny 2D game engine
-
+<img width="1275" height="765" alt="image" src="https://github.com/user-attachments/assets/0d24f4ef-3279-4bbc-91e6-30b34787aa69" />
 Pixine is a small, minimal 2D game engine built while following the COMP‑4300 C++ Game Programming lectures. It’s a playground for engine‑level systems.
 
-> Course playlist referenced while building this project: COMP 4300 – Intro to C++ Game Programming.
-> [https://www.youtube.com/playlist?list=PL_xRyXins848nDj2v-TJYahzvs-XW9sVV](https://www.youtube.com/playlist?list=PL_xRyXins848nDj2v-TJYahzvs-XW9sVV)
+> [COMP 4300 – Intro to C++ Game Programming Playlist](https://www.youtube.com/playlist?list=PL_xRyXins848nDj2v-TJYahzvs-XW9sVV)
 
 ---
 

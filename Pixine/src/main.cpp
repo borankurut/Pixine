@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "GameEngine.h"
+#include "game_engine.h"
 
 int main()
 {

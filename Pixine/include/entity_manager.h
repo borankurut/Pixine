@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 
-#include "Entity.h"
+#include "entity.h"
 
 typedef std::map<std::string, std::vector<Entity>> EntityMap;
 
@@ -23,9 +23,9 @@ class EntityManager
     const EntityMap& get_entity_map();
 
    private:
-    std::vector<Entity> m_entities;         // all entities
-    std::vector<Entity> m_entities_to_add;  // entities to add next update
-    EntityMap m_entity_map;                 //  map from entity tag to vectors
-    size_t m_total_entities = 0;            // total entities created
+    std::vector<Entity> m_entities;
+    std::vector<Entity> m_entities_to_add;
+    EntityMap m_entity_map;
+    size_t m_total_entities = 0;
     void remove_dead_entities(std::vector<Entity>& vec);
 };

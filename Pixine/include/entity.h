@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include "EntityMemoryPool.h"
+#include "entity_memory_pool.h"
 
 class Entity
 {

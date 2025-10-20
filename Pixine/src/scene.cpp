@@ -1,5 +1,5 @@
-#include "Scene.h"
-#include "GameEngine.h"
+#include "scene.h"
+#include "game_engine.h"
 
 Scene::Scene() = default;
 

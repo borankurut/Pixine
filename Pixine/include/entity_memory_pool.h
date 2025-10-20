@@ -1,6 +1,6 @@
 #pragma once
 #include <stack>
-#include "Components.h"
+#include "components.h"
 
 #define MAX_ENTITIES 10000
 

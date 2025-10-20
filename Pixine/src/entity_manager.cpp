@@ -1,4 +1,4 @@
-#include "EntityManager.h"
+#include "entity_manager.h"
 
 EntityManager::EntityManager() = default;
 
@@ -6,9 +6,6 @@ EntityManager::EntityManager() = default;
 // entities added will now be available to use this frame
 void EntityManager::update()
 {
-    // Add entities from m_entitiesToAdd to the proper location(s):
-    // - add them to the vector of all entities
-    // - add them to the vector inside the map, with the tag as a key
     for (const auto& entity : m_entities_to_add)
     {
         m_entities.push_back(entity);
@@ -16,11 +13,8 @@ void EntityManager::update()
     }
     m_entities_to_add.clear();
 
-    // remove dead entities from the vector of all entities
     remove_dead_entities(m_entities);
 
-    // remove dead entities from each vector in the entity map
-    // C++20 way ot iterating through [key, value] pairs in a map
     for (auto& [tag, entityVec] : m_entity_map)
     {
         remove_dead_entities(entityVec);

@@ -3,7 +3,7 @@
 #include <string>
 #include <tuple>
 
-#include "Components.h"
+#include "components.h"
 
 class EntityManager;
 

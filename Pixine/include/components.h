@@ -1,9 +1,7 @@
 #pragma once
 
 #include <utility>
-
-#include "Animation.h"
-#include "Assets.h"
+#include "animation.h"
 
 class Component
 {

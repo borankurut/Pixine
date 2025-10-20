@@ -2,8 +2,8 @@
 
 #include <utility>
 
-#include "Animation.h"
-#include "Assets.h"
+#include "animation.h"
+#include "assets.h"
 
 class Component
 {

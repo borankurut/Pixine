@@ -1,8 +1,7 @@
 #pragma once
 
 #include "SFML/Graphics/Text.hpp"
-#include "Scene.h"
-#include "EntityManager.h"
+#include "scene.h"
 
 class Scene_Menu : public Scene
 {

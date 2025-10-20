@@ -4,8 +4,8 @@
 #include <memory>
 
 #include "SFML/Graphics/RenderWindow.hpp"
-#include "Scene.h"
-#include "Assets.h"
+#include "scene.h"
+#include "assets.h"
 
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
 
