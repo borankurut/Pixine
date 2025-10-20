@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include "Action.h"
 #include "EntityManager.h"
 

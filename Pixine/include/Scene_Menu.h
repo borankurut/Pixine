@@ -1,9 +1,5 @@
 #pragma once
 
-#include <map>
-#include <memory>
-#include <deque>
-
 #include "SFML/Graphics/Text.hpp"
 #include "Scene.h"
 #include "EntityManager.h"

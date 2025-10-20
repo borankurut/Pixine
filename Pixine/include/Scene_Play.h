@@ -34,7 +34,7 @@ class Scene_Play : public Scene
     void update() override;
 
    protected:
-    std::shared_ptr<Entity> m_player;
+    Entity m_player = Entity::invalid_entity;
     std::string m_level_path;
     PlayerConfig m_player_config;
     bool m_draw_textures = true;
@@ -46,7 +46,7 @@ class Scene_Play : public Scene
 
     void init(const std::string& level_path);
 
-    vec2 grid_to_mid_pixel(float, float, std::shared_ptr<Entity>);
+    vec2 grid_to_mid_pixel(float, float, Entity);
 
     void load_level(const std::string& file_name);
 
@@ -54,15 +54,15 @@ class Scene_Play : public Scene
     void spawn_decoration(const DecorationConfig& dc);
     void spawn_player();
 
-    void spawn_bullet(std::shared_ptr<Entity> entity);
+    void spawn_bullet(Entity entity);
 
     void s_movement();
 
     void s_lifespan();
 
     // returns grounded (collision from below)
-    bool resolve_vertical_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
-    void resolve_horizontal_collision_player(std::shared_ptr<Entity> tile, vec2 overlap);
+    bool resolve_vertical_collision_player(Entity tile, vec2 overlap);
+    void resolve_horizontal_collision_player(Entity tile, vec2 overlap);
     void s_collision();
 
     void s_animation();

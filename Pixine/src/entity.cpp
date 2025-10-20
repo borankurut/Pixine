@@ -1,26 +1,22 @@
 #include "Entity.h"
 
-Entity::Entity(const size_t i, std::string t) : m_id(i), m_tag(std::move(t))
+Entity::Entity(const size_t id) : m_id(id)
 {
-    //    m_components = std::make_tuple(
-    //            CTransform(),
-    //            CLifespan(),
-    //            CInput(),
-    //            CBoundingBox(),
-    //            CAnimation(),
-    //            CGravity(),
-    //            CState()
-    //    );
+    /*empty*/
+}
+
+Entity::Entity() : m_id(-1)
+{
 }
 
 bool Entity::is_active() const
 {
-    return m_active;
+    return EntityMemoryPool::Instance().get_active(m_id);
 }
 
 const std::string& Entity::tag() const
 {
-    return m_tag;
+    return EntityMemoryPool::Instance().get_tag(m_id);
 }
 
 size_t Entity::id() const
@@ -30,5 +26,7 @@ size_t Entity::id() const
 
 void Entity::destroy()
 {
-    m_active = false;
+    EntityMemoryPool::Instance().remove_entity(m_id);
 }
+
+Entity Entity::invalid_entity = Entity(-1);

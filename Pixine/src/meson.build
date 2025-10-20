@@ -4,6 +4,7 @@ src = files(
   'assets.cpp',
   'entity.cpp',
   'entity_manager.cpp',
+  'entity_memory_pool.cpp',
   'game_engine.cpp',
   'main.cpp',
   'physics.cpp',
