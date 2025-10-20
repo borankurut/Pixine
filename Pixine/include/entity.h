@@ -25,7 +25,15 @@ class Entity
     T& add_component(TArgs&&... mArgs)
     {
         auto& component = get_component<T>();
-        component = T(std::forward<TArgs>(mArgs)...);
+        if constexpr (std::is_trivially_copyable_v<T>)
+        {
+            component = T(std::forward<TArgs>(mArgs)...);
+        }
+        else
+        {
+            component.~T();
+            new (&component) T(std::forward<TArgs>(mArgs)...);
+        }
         component.has = true;
         return component;
     }

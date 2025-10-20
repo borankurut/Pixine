@@ -150,6 +150,30 @@ void Scene_Play::s_movement()
     C_Transform& p_transform = m_player.get_component<C_Transform>();
     C_Gravity& p_gravity = m_player.get_component<C_Gravity>();
     C_State& p_state = m_player.get_component<C_State>();
+    C_Animation& p_anim = m_player.get_component<C_Animation>();
+
+    if (input.shoot && input.can_shoot)
+    {
+        if (p_state.state == "air" && p_anim.animation.get_name() != Animation::Name::AIR_SHOOT)
+        {
+            m_player.add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::AIR_SHOOT), false);
+        }
+        else if (
+            p_state.state == "run" && p_anim.animation.get_name() != Animation::Name::RUN_SHOOT)
+        {
+            m_player.add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::RUN_SHOOT), false);
+        }
+        else if (
+            p_state.state == "stand" && p_anim.animation.get_name() != Animation::Name::STAND_SHOOT)
+        {
+            m_player.add_component<C_Animation>(
+                m_game->assets().get_animation(Animation::Name::STAND_SHOOT), false);
+        }
+        input.can_shoot = false;
+        spawn_bullet(m_player);
+    }
 
     if (input.right)
     {
@@ -183,12 +207,12 @@ void Scene_Play::s_movement()
     {
         if (e.has_component<C_Transform>())
         {
+            C_Transform& t = e.get_component<C_Transform>();
             if (e.has_component<C_Gravity>())
             {
-                p_transform.velocity.y += p_gravity.gravity;
+                C_Gravity& g = e.get_component<C_Gravity>();
+                t.velocity.y += g.gravity;
             }
-
-            C_Transform& t = e.get_component<C_Transform>();
             t.prev_pos = t.pos;
             t.pos += t.velocity;
         }
@@ -386,25 +410,7 @@ void Scene_Play::s_do_action(const Action& action)
         }
         else if (action.name() == Action::Name::SHOOT)
         {
-            C_Input& p_input = m_player.get_component<C_Input>();
-            const std::string& p_state = m_player.get_component<C_State>().state;
-            p_input.shoot = true;
-            if (p_state == "air")
-            {
-                m_player.add_component<C_Animation>(
-                    m_game->assets().get_animation(Animation::Name::AIR_SHOOT), false);
-            }
-            else if (p_state == "run")
-            {
-                m_player.add_component<C_Animation>(
-                    m_game->assets().get_animation(Animation::Name::RUN_SHOOT), false);
-            }
-            else
-            {
-                m_player.add_component<C_Animation>(
-                    m_game->assets().get_animation(Animation::Name::STAND_SHOOT), false);
-            }
-            spawn_bullet(m_player);
+            m_player.get_component<C_Input>().shoot = true;
         }
     }
     else if (action.type() == Action::Type::END)
